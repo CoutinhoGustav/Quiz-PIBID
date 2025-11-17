@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Desinformação e IA</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<style>
+/* Estilos corrigidos para evitar erros de sintaxe */
+body {
+    background-color: #354761 !important;
+}
+
+.card {
+    border: none;
+    box-shadow: 1px 1px 17px 19px rgba(255, 255, 255, 0.2);
+}
+
+.card-title {
+    font-weight: bold;
+    color: #354761 !important;
+}
+.mb-4 {
+    margin-bottom: 0.5rem !important;
+}
+.text-muted {
+    --bs-text-opacity: 1;
+    margin: -67px -92px 0 32px;
+    color: var(--bs-secondary-color) !important;
+}
+
+.start-btn {
+    background-color: #354761;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.start-btn:hover {
+    background-color: #ffffff;
+    color: #354761;
+    border-color: #354761;
+    transition: background-color 0.3s, color 0.3s;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.option {
+    background-color: #e9ecef;
+    border: 1px solid #dee2e6;
+    border-radius: 5px;
+    padding: 15px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+    text-align: left;
+}
+
+.option:hover {
+    background-color: #dcdcdc;
+    transform: translateY(-2px);
+}
+
+.option.correct {
+    background-color: #d4edda;
+    border-color: #c3e6cb;
+    color: #155724;
+}
+
+.option.incorrect {
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+    color: #721c24;
+}
+</style>
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="col-lg-8 col-md-10 col-sm-12">
+            <div class="card p-4 shadow-lg rounded-3">
+                <div id="start-screen" class="text-center">
+                    <h1 class="card-title text-primary mb-3">Bem-vindo ao Quiz</h1>
+                    <p class="card-text mb-4">Teste seus conhecimentos sobre Desinformação e Inteligência Artificial. (30 perguntas)</p>
+                    <button id="start-button" class="start-btn">Iniciar Quiz</button>
+                </div>
+
+                <div id="quiz" class="text-left" style="display:none;">
+                    <p class="text-muted text-end mb-1">
+                        <span id="current-q">1</span>/<span id="total-q">30</span>
+                    </p>
+                    <h2 id="question" class="mb-4"></h2>
+                    <div id="options" class="options-container d-grid gap-3"></div>
+                    <button id="next-button" class="btn btn-primary mt-4 w-100">Próxima Pergunta</button>
+                </div>
+
+                <div id="results" class="results-container text-center" style="display:none;">
+                    <h2 class="text-success mb-3">Resultados do Quiz</h2>
+                    <p id="score-text" class="lead mb-4"></p>
+                    <button id="restart-button" class="btn btn-success mt-4">Reiniciar Quiz</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+const questions = [
+  // Pergunta 1: Conceito de Informação
+  {question:"Informação é o conjunto organizado de dados capaz de gerar conhecimento e orientar decisões. Quais dimensões a envolvem?", options:["Técnica, Moral e Social","Técnica, Semântica e Pragmática","Digital, Algorítmica e Instantânea","Conhecimento, Sentido e Relevância"], answer:1},
+  
+  // Pergunta 2: Dimensão Pragmática da Informação
+  {question:"A dimensão Pragmática da informação refere-se a quê?", options:["Apenas à transmissão de dados","À codificação por meios tecnológicos","Ao uso social e ético da informação","Ao significado que o receptor atribui à mensagem"], answer:2},
+
+  // Pergunta 3: Conceito de Desinformação
+  {question:"O que caracteriza a Desinformação, diferenciando-a de uma 'informação incorreta'?", options:["Ser apenas um erro de digitação","A ausência de intencionalidade","A intenção deliberada de enganar ou manipular","A falta de relevância do dado"], answer:2},
+
+  // Pergunta 4: Característica da Desinformação Moderna (IA/Redes Sociais)
+  {question:"Na era digital, uma das características da desinformação é o 'Apelo Emocional'. Como isso funciona?", options:["Produzindo conteúdo neutro para o debate","Reduzindo a polarização","Provocando indignação, medo ou empatia para reduzir o pensamento crítico","Focando em dados científicos complexos"], answer:2},
+
+  // Pergunta 5: IA - IA Fraca
+  {question:"Qual tipo de IA é predominante no presente, executando tarefas específicas com base em dados e algoritmos?", options:["IA Superinteligente","IA Geral","IA Fraca","IA Generativa"], answer:2},
+
+  // Pergunta 6: IA - Definição de Deepfake
+  {question:"O termo Deepfake (Deep Learning + Fake) designa o quê?", options:["Um tipo de algoritmo de recomendação","Conteúdo criado com ética algorítmica","Conteúdos manipulados ou gerados por IA que imitam pessoas reais com grande realismo","Apenas um chatbot avançado"], answer:2},
+  
+  // Pergunta 7: Estudo de Caso (Critério de Falsidade em Vídeos - Voz)
+  {question:"No caso do vídeo do empresário Luciano Hang, qual critério indica que a voz é sintética?", options:["Entonação robótica sem variação de ritmo ou respiração humana perceptível","O uso de logotipo animado oficial da Havan","O apelo à curiosidade do público","O enquadramento ser padrão de noticiário"], answer:0},
+
+  // Pergunta 8: Estudo de Caso (Critério de Falsidade em Vídeos - Imagem)
+  {question:"Qual critério de verificação de vídeos aponta para a manipulação de imagem (Deepfake) no caso do Tom Cruise?", options:["Voz muito limpa e com variações respiratórias","O rosto estar ligeiramente 'fixo' e a iluminação no rosto diferir da luz do corpo","O vídeo ter sido publicado em canais oficiais do ator","O movimento labial ser perfeitamente sincronizado"], answer:1},
+  
+  // Pergunta 9: Definição de Machine Learning
+  {question:"Qual sub-área da IA se concentra em fazer com que sistemas aprendam automaticamente com dados, sem serem explicitamente programados para cada tarefa?", options:["Processamento de Linguagem Natural (PLN)","Aprendizado Profundo (Deep Learning)","Aprendizado de Máquina (Machine Learning)","Deepfake"], answer:2},
+
+  // Pergunta 10: Definição de Deep Learning
+  {question:"Qual ramo do Machine Learning utiliza Redes Neurais Artificiais com múltiplas camadas (deep neural networks) e é base de sistemas generativos?", options:["Big Data","Ética Algorítmica","Aprendizado Profundo (Deep Learning)","Algoritmos de Recomendação"], answer:2},
+
+  // Pergunta 11: IA Generativa
+  {question:"Sistemas como ChatGPT e DALL·E se enquadram em qual Categoria Funcional de IA?", options:["IA Reativa","IA Preditiva","IA Fraca – nível básico","IA Generativa"], answer:3},
+
+  // Pergunta 12: Big Data
+  {question:"Qual é o 'combustível' da IA moderna, um conjunto massivo e variado de dados digitais que exige tecnologias avançadas para análise?", options:["Aprendizado de Máquina","Algoritmo","Processamento de Linguagem Natural","Big Data"], answer:3},
+
+  // Pergunta 13: Literaica Digital e Midiática
+  {question:"Qual é a capacidade fundamental para lidar com os desafios da desinformação, envolvendo a análise crítica, interpretação e produção ética de informações?", options:["Ética Algorítmica","Big Data","Literacia Digital e Midiática","Modelos Generativos"], answer:2},
+  
+  // Pergunta 14: Ferramenta de Verificação de Imagens/Vídeos
+  {question:"Qual ferramenta de verificação é um plug-in de navegador que permite analisar vídeos e imagens para rastrear a origem e detectar manipulações?", options:["FotoForensics","Sensity AI","InVID & WeVerify","Botometer"], answer:2},
+
+  // Pergunta 15: Ferramenta de Verificação de Textos/Notícias
+  {question:"Qual ferramenta busca notícias verificadas por agências de checagem certificadas, sendo útil para confirmar notícias virais?", options:["TinEye","Google Fact Check Explorer","CrowdTangle","NewsGuard"], answer:1},
+  
+  // Pergunta 16: Diferença entre Informação e Desinformação (Base ética)
+  {question:"Qual é a base ética da informação, em contraste com o engano, Omissão ou má-fé da desinformação?", options:["Apenas a codificação de dados","Veracidade, transparência e responsabilidade","Efeito social de polarização","Ser Ubíqua e Instantânea"], answer:1},
+
+  // Pergunta 17: Efeito Social da Desinformação
+  {question:"O Efeito Social da Desinformação, automatizada por IA, é uma ameaça a quê?", options:["Apenas à Literacia Digital","Ao Processamento de Linguagem Natural (PLN)","À integridade cognitiva e à democracia informacional","Aos Algoritmos de Recomendação"], answer:2},
+
+  // Pergunta 18: Dimensão Semântica da Desinformação
+  {question:"A desinformação na 'dimensão semântica' refere-se a quê?", options:["Manipulação digital de dados e imagens","Circulação massiva de conteúdo falso com impacto social","Distorção do sentido original de uma informação","Uso de IA para criar textos falsos e áudios simulados"], answer:2},
+
+  // Pergunta 19: Definição de Algoritmo
+  {question:"Em termos simples, o que é um Algoritmo no contexto de um sistema de IA?", options:["O 'combustível' da IA moderna (Big Data)","O 'passo a passo' matemático que permite ao computador executar uma tarefa ou tomar uma decisão","Um programa de computador que simula uma conversa real","Um modelo computacional inspirado no cérebro humano"], answer:1},
+
+  // Pergunta 20: Redes Neurais Artificiais
+  {question:"O que são as Redes Neurais Artificiais e qual sua função principal?", options:["Softwares usados apenas para Deepfake","Modelos computacionais inspirados no cérebro, capazes de aprender padrões complexos","Sistemas que analisam o comportamento do usuário e sugerem conteúdos","Uma ferramenta que classifica a confiabilidade de sites de notícias"], answer:1},
+
+  // Pergunta 21: Processamento de Linguagem Natural (PLN)
+  {question:"Qual campo da IA permite às máquinas compreender, interpretar e gerar linguagem humana de modo coerente (Ex: ChatGPT)?", options:["Machine Learning","Aprendizado Profundo","Processamento de Linguagem Natural (PLN)","Big Data"], answer:2},
+
+  // Pergunta 22: Aprendizado Supervisionado
+  {question:"O que é o Aprendizado Supervisionado, um dos métodos do Machine Learning?", options:["O sistema aprende por conta própria, identificando padrões ocultos","O sistema aprende a partir de dados rotulados (com respostas corretas já conhecidas)","É o uso de redes neurais com múltiplas camadas","É o uso de IA para criar novos conteúdos originais"], answer:1},
+
+  // Pergunta 23: Ética Algorítmica
+  {question:"O campo da Ética Algorítmica estuda quais implicações morais e sociais?", options:["Apenas a velocidade de processamento do Big Data","Viés, discriminação, privacidade e responsabilidade no uso da IA","A criação de textos falsos e áudios simulados","O aprimoramento do Aprendizado Supervisionado"], answer:1},
+
+  // Pergunta 24: Critério de Falsidade em Vídeos (Estudo de Caso - Animais)
+  {question:"No caso dos vídeos de Animais manipulados por IA, qual inconsistência visual é típica da geração digital?", options:["Ausência de ruído ambiente","Texturas artificiais, detalhes anatômicos distorcidos e falta de profundidade de campo","Ter sido publicado em canais oficiais e verificados","A sincronia perfeita entre áudio e movimento"], answer:1},
+
+  // Pergunta 25: Ferramenta Específica para Deepfake/Manipulação Facial
+  {question:"Qual ferramenta é utilizada por instituições jornalísticas e em investigações para detectar manipulações em vídeos e áudios, especialmente Deepfake?", options:["Botometer","Deepware Scanner","Google Fact Check Explorer","Amnesty YouTube DataViewer"], answer:1},
+
+  // Pergunta 26: Agência de Checagem Internacional
+  {question:"Qual é um dos sites internacionais mais antigos e confiáveis que checa boatos e desinformação digital?", options:["Agência Lupa","Projeto Comprova","Snopes","Fato ou Fake (G1)"], answer:2},
+
+  // Pergunta 27: Ferramenta para Rastreamento de Imagens
+  {question:"Qual ferramenta permite pesquisar a origem de uma imagem e rastrear onde mais ela foi publicada, para identificar imagens reutilizadas fora de contexto?", options:["NewsGuard","TinEye / Google Imagens Reverso","Hive Moderation AI Detector","Reality Defender"], answer:1},
+
+  // Pergunta 28: Característica da Informação na Era Digital (IA)
+  {question:"Com o avanço da IA, a informação ganhou novos contornos. Qual é uma de suas novas características?", options:["Tornou-se sempre imparcial","Tornou-se lenta e localizada","Tornou-se ubíqua, instantânea e algorítmica","Tornou-se dependente de programação explícita"], answer:2},
+
+  // Pergunta 29: Critério para Falsidade (William Bonner)
+  {question:"No caso do Deepfake do William Bonner, qual inconsistência sonora é um indício de manipulação por IA?", options:["O ritmo de fala ser muito variável","Voz monotônica e sem variações emocionais, como se fosse um áudio text-to-speech (TTS)","A presença de ruído ambiente","O som ser excessivamente limpo, mas com variações respiratórias audíveis"], answer:1},
+
+  // Pergunta 30: Objetivo da IA Generativa (Uso Ético vs Desinformação)
+  {question:"Modelos Generativos podem ser usados para fins criativos. Contudo, qual é o risco quando aplicados de forma indevida?", options:["Criar apenas IA Superinteligente","Apenas auxiliar o Aprendizado Supervisionado","Disseminar desinformação","Diminuir o volume do Big Data"], answer:2},
+];
+
+document.addEventListener('DOMContentLoaded', () => {
+    let currentQuestionIndex = 0;
+    let score = 0;
+    let shuffledQuestions = [];
+
+    // Elementos HTML
+    const startScreen = document.getElementById('start-screen');
+    const startButton = document.getElementById('start-button');
+    const quizElement = document.getElementById('quiz');
+    const resultsElement = document.getElementById('results');
+    const questionElement = document.getElementById('question');
+    const optionsElement = document.getElementById('options');
+    const nextButton = document.getElementById('next-button');
+    const scoreText = document.getElementById('score-text');
+    const restartButton = document.getElementById('restart-button');
+    const currentQSpan = document.getElementById('current-q');
+    const totalQSpan = document.getElementById('total-q');
+
+
+    // Função para embaralhar um array (Fisher-Yates)
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function startQuiz() {
+        // Inicializa e embaralha as perguntas
+        shuffledQuestions = [...questions];
+        shuffleArray(shuffledQuestions);
+        
+        currentQuestionIndex = 0;
+        score = 0;
+        quizElement.style.display = 'block';
+        startScreen.style.display = 'none';
+        resultsElement.style.display = 'none';
+        
+        if (totalQSpan) totalQSpan.textContent = shuffledQuestions.length;
+        
+        showQuestion();
+    }
+
+    function showQuestion() {
+        if (currentQuestionIndex >= shuffledQuestions.length) {
+            showResults();
+            return;
+        }
+        
+        const currentQuestion = shuffledQuestions[currentQuestionIndex];
+        questionElement.textContent = currentQuestion.question;
+        optionsElement.innerHTML = '';
+        
+        // Atualiza o contador
+        if (currentQSpan) currentQSpan.textContent = currentQuestionIndex + 1;
+
+        // A resposta correta (answer) é o índice da opção na lista original
+        const originalAnswerText = currentQuestion.options[currentQuestion.answer];
+        
+        // Embaralha as opções para esta pergunta
+        const shuffledOptions = [...currentQuestion.options];
+        shuffleArray(shuffledOptions);
+
+        // Encontra o novo índice da resposta correta após o embaralhamento
+        const newCorrectIndex = shuffledOptions.indexOf(originalAnswerText);
+
+        shuffledOptions.forEach((option, index) => {
+            const optionDiv = document.createElement('div');
+            optionDiv.classList.add('option');
+            optionDiv.textContent = option;
+            
+            // Passa o índice da opção na lista EMBARALHADA e o novo índice correto
+            optionDiv.addEventListener('click', () => selectOption(optionDiv, index, newCorrectIndex));
+            optionsElement.appendChild(optionDiv);
+        });
+
+        nextButton.style.display = 'none';
+    }
+
+    function selectOption(selectedOption, selectedIndex, newCorrectIndex) {
+        // Trava a seleção para evitar cliques múltiplos
+        Array.from(optionsElement.children).forEach(option => {
+            option.style.pointerEvents = 'none';
+        });
+        
+        const isCorrect = selectedIndex === newCorrectIndex;
+
+        if (isCorrect) {
+            selectedOption.classList.add('correct');
+            score++;
+        } else {
+            selectedOption.classList.add('incorrect');
+            // Revela a opção correta
+            const correctOption = optionsElement.children[newCorrectIndex];
+            correctOption.classList.add('correct');
+        }
+
+        nextButton.style.display = 'block';
+    }
+
+    function showResults() {
+        quizElement.style.display = 'none';
+        resultsElement.style.display = 'block';
+        scoreText.textContent = `Você acertou ${score} de ${shuffledQuestions.length} perguntas.`;
+    }
+
+    // Event Listeners
+    startButton.addEventListener('click', startQuiz);
+
+    nextButton.addEventListener('click', () => {
+        currentQuestionIndex++;
+        showQuestion(); // Chama showQuestion, que decide se deve ir para a próxima ou mostrar resultados
+    });
+
+    restartButton.addEventListener('click', startQuiz);
+});
+    </script>
+</body>
+</html>
